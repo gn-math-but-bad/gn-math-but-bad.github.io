@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body,
+      html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-image: url("gn-math.png");
+        background-size: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      async function enableAll() {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen().catch(() => {});
+        }
+
+        document.body.requestPointerLock();
+      }
+
+      document.addEventListener("click", enableAll, { once: true });
+
+      document.addEventListener("pointerlockchange", () => {
+        if (document.pointerLockElement !== document.body) {
+          document.body.requestPointerLock();
+        }
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (document.pointerLockElement === document.body) {
+        }
+      });
+    </script>
+  </body>
+</html>
